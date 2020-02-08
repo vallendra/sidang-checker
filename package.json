@@ -1,0 +1,14 @@
+{
+  "name": "sidang-checker",
+  "version": "0.0.0",
+  "description": "Check my sidang",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "@line/bot-sdk": "^6.8.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.16.3"
+  }
+}
