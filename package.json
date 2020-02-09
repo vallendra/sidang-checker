@@ -1,26 +1,21 @@
 {
   "name": "sidang-checker",
-  "version": "0.0.0",
-  "description": "Check my sidang",
-  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "node ."
+    "dev": "bottender dev",
+    "lint": "eslint .",
+    "start": "bottender start",
+    "test": "jest"
   },
   "dependencies": {
-    "@bottender/express": "^1.0.0",
-    "bottender": "^1.2.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.16.3"
+    "bottender": "1.2.0"
   },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vallendra/sidang-checker.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/vallendra/sidang-checker/issues"
-  },
-  "homepage": "https://github.com/vallendra/sidang-checker#readme"
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1"
+  }
 }
