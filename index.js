@@ -25,6 +25,10 @@ app.post('/callback', line.middleware(config), (req, res) => {
   Promise
     .all(req.body.events.map(handleEvent))
     .then((result) => res.json(result))
+    .catch((err) => {
+      console.error(err);
+      res.status(200).end();
+    });
 });
 
 app.use((err, req, res, next) => {
