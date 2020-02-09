@@ -1,63 +1,42 @@
 'use strict';
 
-const line = require('@line/bot-sdk');
-const express = require('express');
 const dotenv = require('dotenv');
+const { LineBot } = require("bottender");
+const { createServer } = require("@bottender/express");
+
 dotenv.config();
 
-// create LINE SDK config from env variables
-const config = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.CHANNEL_SECRET,
-};
-
-// create LINE SDK client
-const client = new line.Client(config);
-
-// create Express app
-// about Express itself: https://expressjs.com/
-const app = express();
-
-// register a webhook handler with middleware
-// about the middleware, please refer to doc
-app.get('/callback', (req, res) => res.end(`I'm listening. Please access with POST.`));
-
-// webhook callback
-app.post('/callback', line.middleware(config), (req, res) => {
-  if (req.body.destination) {
-    console.log("Destination User ID: " + req.body.destination);
-  }
-
-  // req.body.events should be an array of events
-  if (!Array.isArray(req.body.events)) {
-    return res.status(200).end();
-  }
-
-  // handle events separately
-  Promise.all(req.body.events.map(handleEvent))
-    .then(() => res.end())
-    .catch((err) => {
-      console.error(err);
-      res.status(200).end();
-    });
+const bot = new LineBot({
+  // ubah ke access token dan channelSecret dibawah, sesuai dengan yang ada di line console
+  accessToken: process.env.CHANNEL_ACCESS_TOKEN,
+  channelSecret: process.env.CHANNEL_SECRET
 });
-
-// event handler
-function handleEvent(event) {
-  if (event.type !== 'message' || event.message.type !== 'text') {
-    // ignore non-text-message event
-    return Promise.resolve(null);
+bot.onEvent(async context => {
+  // 1. Pengecekan apakah bot menerima chat berupa text
+  if (context.event.isText) {
+    // 2. Ambil value text yang dikirim oleh user, simpan di variabel receivedMessage
+    const receivedMessage = context.event.text;
+    // 3. Pengecekan apakah user mengirim 2 pasang string dengan spasi
+    // Contoh valid text: 1 3 | 4 2 | 10 23
+    if (receivedMessage.split(" ").length === 2) {
+      // 4. Menyimpan hasil split. Kalau messagenya: "1 3" splittedText akan berisi ["1", "3"]
+      const splittedText = receivedMessage.split(" ");
+      // 5. Ambil 2 angka yang masih dalam bentuk string, sekaligus ubah menjadi Number (integer)
+      const first = Number(splittedText[0]);
+      const second = Number(splittedText[1]);
+      // 6. Lakukan proses penjumlahan
+      const sumResult = first + second;
+      // 7. Balas pesan user dengan hasil penjumlahan 2 angka yang dikirim
+      await context.replyText(sumResult);
+    } else {
+      // 8. Beri respon kepada user jika format pesan yang diberikan tidak sesuai
+      await context.replyText(
+        "Maaf pesanmu tidak sesuai format, contoh yang benar: 1 3 atau 10 12"
+      );
+    }
   }
-
-  // create a echoing text message
-  const echo = { type: 'text', text: event.message.text };
-
-  // use reply API
-  return client.replyMessage(event.replyToken, echo);
-}
-
-// listen on port
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`listening on ${port}`);
+});
+const server = createServer(bot);
+server.listen(process.env.PORT || 5000, () => {
+  console.log("server is running on 5000 port...");
 });
