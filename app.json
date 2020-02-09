@@ -2,7 +2,7 @@
 {
     "name": "Sidang checker",
     "description": "sidang checker",
-    "keywords": ["chatbot", "line", "java"],
+    "keywords": ["chatbot", "line", "js"],
     "env": {
         "LINE_BOT_CHANNEL_TOKEN": {
             "description": "LINE bot Channel access token from the Channel Console",
