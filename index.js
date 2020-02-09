@@ -23,28 +23,24 @@ const app = express();
 app.get('/callback', (req, res) => res.end(`I'm listening. Please access with POST.`));
 
 // webhook callback
-app.post('/callback', (req, res) => res.status(200).end());
+app.post('/callback', line.middleware(config), (req, res) => {
+  if (req.body.destination) {
+    console.log("Destination User ID: " + req.body.destination);
+  }
 
-// {
-//   res.end(`I'm listening. Please access with POST.`)
-//   if (req.body.destination) {
-//     console.log("Destination User ID: " + req.body.destination);
-//   }
+  // req.body.events should be an array of events
+  if (!Array.isArray(req.body.events)) {
+    return res.status(200).end();
+  }
 
-//   // req.body.events should be an array of events
-//   if (!Array.isArray(req.body.events)) {
-//     return res.status(200).end();
-//   }
-
-//   // handle events separately
-//   Promise.all(req.body.events.map(handleEvent))
-//     .then(() => res.end())
-//     .catch((err) => {
-//       console.error(err);
-//       console.log('err')
-//       res.status(200).end();
-//     });
-// });
+  // handle events separately
+  Promise.all(req.body.events.map(handleEvent))
+    .then(() => res.end())
+    .catch((err) => {
+      console.error(err);
+      res.status(200).end();
+    });
+});
 
 // event handler
 function handleEvent(event) {
